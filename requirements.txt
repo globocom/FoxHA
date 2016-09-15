@@ -1,0 +1,9 @@
+enum34==1.0.4
+six==1.9.0
+pyasn1==0.1.8
+pycparser==2.14
+cffi==1.4.1
+cryptography==1.2.3
+MySQL-python==1.2.5
+PTable==0.9.2
+colored==1.2.1

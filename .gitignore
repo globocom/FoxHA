@@ -1,0 +1,25 @@
+*.pyc
+*.orig
+*.log
+.idea/*
+.DS_Store
+*~
+.coverage
+coverage.xml
+test-report.xml
+\#*\#
+*.bak
+.wiki
+sql/Gerar carga MySQL.sql
+untitled
+cryptography_example.txt
+*.key
+dist
+foxha.egg-info
+*.egg
+*.key*
+foxha_config_*
+build/
+.cache/
+htmlcov/
+log/*

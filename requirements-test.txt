@@ -1,0 +1,5 @@
+py==1.4.31
+pytest==2.9.2
+pytest-rerunfailures==2.0.0
+paramiko==1.17
+pytest-cov==2.2.1

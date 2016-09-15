@@ -1,0 +1,49 @@
+version: '2'
+services:
+  db1:
+    build:
+      context: .
+      dockerfile: Dockerfile-nodes
+    container_name: db1
+    hostname: db1
+    volumes:
+      - "./setup/scripts/NODES:/scripts"
+    tty: true
+    ports:
+      - "3308:3306"
+      - "2208:22"
+
+  db2:
+    build:
+      context: .
+      dockerfile: Dockerfile-nodes
+    container_name: db2
+    hostname: db2
+    links:
+     - db1
+    volumes:
+      - "./setup/scripts/NODES:/scripts"
+    tty: true
+    ports:
+      - "3310:3306"
+      - "2210:22"
+
+  dbrepo:
+    depends_on:
+      - db1
+      - db2
+    image: mysql:5.7.14
+    container_name: dbrepo
+    hostname: dbrepo
+    links:
+     - db1
+     - db2 
+    volumes:
+      - "./setup/scripts/REPO:/docker-entrypoint-initdb.d"
+    ports:
+      - "3312:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: test123 
+      MYSQL_DATABASE: foxha
+      MYSQL_USER: a_foxha
+      MYSQL_PASSWORD: test123

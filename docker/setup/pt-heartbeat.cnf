@@ -1,0 +1,6 @@
+#Socket Path
+socket=/var/run/mysqld/mysqld.sock
+pass=heartbeat
+user=heartbeat
+database=heartbeat
+pid=/tmp/pt-heartbeat.pid

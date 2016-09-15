@@ -1,0 +1,83 @@
+############################################################
+# Dockerfile
+# Based on Ubuntu
+############################################################
+
+# Set the base image to Ubuntu
+FROM ubuntu:16.04
+
+# File Author / Maintainer
+MAINTAINER Rafael Dantas
+
+# Set the env variable DEBIAN_FRONTEND to noninteractive
+#ENV DEBIAN_FRONTEND noninteractive
+
+# Define timezone
+ENV TZ 'America/Sao_Paulo'
+COPY ./setup/localtime_America-Sao_Paulo /etc/localtime
+
+# Configure Volumes
+#VOLUME /setup
+
+################## BEGIN INSTALLATION ######################
+# Update the repository sources list and install MySQL Server 5.7 quietly
+RUN echo "mysql-server-5.7 mysql-server/root_password password test123" | debconf-set-selections \
+&& echo "mysql-server-5.7 mysql-server/root_password_again password test123" | debconf-set-selections \
+&& apt-get update && apt-get install -y --no-install-recommends mysql-server-5.7
+
+# Install net-tools, openssh-server, monit, pt-heartbeat dependencias and clean up the apt cache
+RUN apt-get update && apt-get install -y --no-install-recommends \ 
+ca-certificates \
+libdbd-mysql-perl \
+libdbi-perl \
+monit \
+openssh-server \
+wget \
+&& rm -rf /var/lib/apt/lists/*
+
+# The official Debian and Ubuntu images automatically run apt-get clean
+
+##################### INSTALLATION END #####################
+
+##################### BEGIN ENVIRONMENT AND SERVICES CONFIGURATION #####################
+
+# Permit root login through ssh and define root password
+RUN sed -i 's/PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config \ 
+&& sed -i 's/root:\*/root:$6$XFEgBf2Q$jBd6E5yTaRgjMUfkf2mbYx7fKrUrCLCe.KTPOVcAKKopXKBr6GaSCd0\/IXFYFvNnyOfIT1RtAa7rM8OJh2wbI1/' /etc/shadow
+
+# Copy pt-heartbeat config files and for the monit
+COPY ./setup/pt-heartbeat_monit /etc/monit/conf.d/
+COPY ./setup/pt-heartbeat.cnf /etc/pt-heartbeat.cnf
+COPY ./setup/pt-heartbeat_init /etc/init.d/pt-heartbeat_init
+
+#Install Percona pt-heartbeat
+RUN wget -c percona.com/get/pt-heartbeat -P /usr/local/bin/ \
+&& chmod +x /usr/local/bin/pt-heartbeat \
+&& chmod +x /etc/init.d/pt-heartbeat_init
+
+# Comment config at /etc/monit/monitrc
+#RUN sed -i 's/include \/etc\/monit\/conf-enabled/#include \/etc\/monit\/conf-enabled/' /etc/monit/monitrc
+RUN sed -i '/conf-enabled/s/^/#/' /etc/monit/monitrc
+
+# Change MySQL Configurations and remove auto.cnf file
+RUN sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/mysql.conf.d/mysqld.cnf \
+&& sed -i 's/#log_bin/log_bin/' /etc/mysql/mysql.conf.d/mysqld.cnf \
+&& sed -i "/expire_logs_days/c\expire_logs_days  = 1" /etc/mysql/mysql.conf.d/mysqld.cnf \
+&& echo "#FoxHA Configs\n[mysqld]" > /etc/mysql/mysql.conf.d/foxha.cnf \
+&& echo "read_only = 1" >> /etc/mysql/mysql.conf.d/foxha.cnf \
+&& echo "relay_log = /var/log/mysql/mysql-relay" >> /etc/mysql/mysql.conf.d/foxha.cnf \
+&& echo "log_slave_updates = ON" >> /etc/mysql/mysql.conf.d/foxha.cnf \
+&& echo "gtid_mode = ON" >> /etc/mysql/mysql.conf.d/foxha.cnf \
+&& echo "enforce_gtid_consistency = ON" >> /etc/mysql/mysql.conf.d/foxha.cnf \
+&& echo "master_info_repository = TABLE" >> /etc/mysql/mysql.conf.d/foxha.cnf \
+&& echo "relay_log_info_repository = TABLE" >> /etc/mysql/mysql.conf.d/foxha.cnf \
+&& echo "binlog_format = MIXED" >> /etc/mysql/mysql.conf.d/foxha.cnf \
+&& echo "transaction_isolation = READ-COMMITTED" >> /etc/mysql/mysql.conf.d/foxha.cnf \
+&& test -f /var/lib/mysql/auto.cnf && rm -f /var/lib/mysql/auto.cnf
+
+# Copy init script and set execution permission
+COPY ./setup/init_services.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/init_services.sh
+
+# Set default container command
+ENTRYPOINT ["init_services.sh"]

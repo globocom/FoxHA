@@ -1,0 +1,4 @@
+set daemon 20
+check process pt-heartbeat with pidfile /tmp/pt-heartbeat.pid
+start program = "/etc/init.d/pt-heartbeat_init start"
+stop program = "/etc/init.d/pt-heartbeat_init stop"
