@@ -17,7 +17,7 @@ cryptography_example.txt
 dist
 foxha.egg-info
 *.egg
-*.key*
+*.key
 foxha_config_*
 build/
 .cache/

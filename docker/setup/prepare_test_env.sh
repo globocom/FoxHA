@@ -13,6 +13,7 @@
 #$1 - start/stop
 
 ACTION=$(echo $1 | tr "A-Z" "a-z")
+KEYFILE_DEV=config/.key_dev
 
 #Help
 if [ -z $ACTION ]; then
@@ -33,6 +34,11 @@ docker_stop()
    cd ..
 }
 
+keyfile_symlink()
+    if [ -f $KEYFILE_DEV ]; then
+      ln -f $KEYFILE_DEV config/.key
+    fi
+    
 config_mysql_repl()
 {
 
@@ -85,6 +91,7 @@ fi
 
 if [ $ACTION == "start" ]; then
     docker_start
+    keyfile_symlink
     config_mysql_repl db1 3308 db2
     config_mysql_repl db2 3310 db1
 else
