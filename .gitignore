@@ -1,6 +1,5 @@
 *.pyc
 *.orig
-*.log
 .idea/*
 .DS_Store
 *~
@@ -22,4 +21,3 @@ foxha_config_*
 build/
 .cache/
 htmlcov/
-log/*
