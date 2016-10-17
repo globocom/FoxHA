@@ -28,3 +28,9 @@ stop_test_env: # stop docker containers
 
 test: # run tests
 	@py.test -v --cov-config .coveragerc --cov-report html --cov foxha ./tests/
+
+release:
+	python setup.py sdist upload
+
+release_globo:
+	python setup.py sdist upload -r ipypiglobo
