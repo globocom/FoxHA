@@ -1,4 +1,5 @@
 import pytest
+from foxha import __version__
 from foxha import fox
 
 
@@ -8,7 +9,7 @@ def test_version_message(capsys):
     assert str(e.value) == '0'
 
     out, err = capsys.readouterr()
-    assert '0.9.0' in err
+    assert __version__ in err
 
 
 def test_can_get_config(environment, capsys):
