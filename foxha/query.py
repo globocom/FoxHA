@@ -18,6 +18,9 @@ class Query:
     SQL_LIST = "SELECT g.group_name FROM repl_groups g ORDER BY g.group_name;"
     SQL_LIST_NODES = "SELECT n.group_name,n.servername,n.node_ip,n.status \
     FROM repl_nodes n WHERE n.group_name='%s' ORDER BY n.servername;"
+    SQL_LIST_NODES_ENABLED = "SELECT n.group_name,n.servername,n.node_ip,n.status \
+    FROM repl_nodes n WHERE n.group_name='%s' and n.status='enabled' \
+    ORDER BY n.servername;"
     SQL_NODE_STATUS = "SELECT n.status, n.mode FROM repl_nodes n \
     WHERE n.group_name='%s' and n.node_ip='%s'"
     SQL_CONFIG_GROUP = "SELECT g.group_name, g.description, g.mysql_adm_user,\

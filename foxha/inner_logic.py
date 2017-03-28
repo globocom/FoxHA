@@ -12,6 +12,10 @@ def get_nodes(group, connection):
     return node_utils.get_all_nodes(group, connection)
 
 
+def get_enabled_nodes(group, connection):
+    return node_utils.get_enabled_nodes(group, connection)
+
+
 def get_groups(connection):
     result = connection.execute(Query.SQL_LIST)
     return [Group(group['group_name'], connection) for group in result]
@@ -33,7 +37,7 @@ def is_master_master(group, connection):
     if len(result) != 2:
         return False
 
-    nodes = get_nodes(group, connection)
+    nodes = get_enabled_nodes(group, connection)
     master = nodes[0]
     pair = nodes[1]
     if master.is_replication_running() and pair.is_replication_running():
@@ -88,7 +92,7 @@ def switchover(group, connection):
     if not is_master_master(group, connection):
         raise IsNotMasterMasterEnvironmentError(group)
 
-    for node in get_nodes(group, connection):
+    for node in get_enabled_nodes(group, connection):
         if not node.is_read_write():
             if set_read_write(node, connection):
                 break
@@ -99,7 +103,7 @@ def switchover(group, connection):
 def failover(group, connection):
     node_write = get_write_node(group, connection)
 
-    nodes = get_nodes(group, connection)
+    nodes = get_enabled_nodes(group, connection)
 
     if len(nodes) != 2:
         raise IsNotMasterMasterEnvironmentError(group)
