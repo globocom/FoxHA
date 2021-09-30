@@ -3,7 +3,7 @@ import pytest
 
 from foxha import connection
 from foxha.utils import Utils
-from test_helpers import BuildEnvironment
+from .test_helpers import BuildEnvironment
 
 
 @pytest.fixture(scope='module')

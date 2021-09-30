@@ -3,7 +3,7 @@ import pytest
 from foxha import fox
 from foxha import inner_logic
 from foxha.errors import NodeIsDownError
-import test_utils
+from . import test_utils
 
 
 def setup_module(module):

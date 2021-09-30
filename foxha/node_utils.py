@@ -1,5 +1,5 @@
-from query import Query
-from node import Node
+from .query import Query
+from .node import Node
 
 
 def _get_nodes_by_query(query, group, connection):

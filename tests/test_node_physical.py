@@ -2,8 +2,8 @@ import time
 import pytest
 from foxha.node import Node, PhysicalNode
 from foxha.utils import Utils
-import conftest
-import test_utils
+from . import conftest
+from . import test_utils
 
 
 @pytest.fixture

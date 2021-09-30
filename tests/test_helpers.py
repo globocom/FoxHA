@@ -1,7 +1,7 @@
 import socket
 import time
 import paramiko
-import ConfigParser
+import configparser
 from foxha.utils import Utils
 
 
@@ -15,7 +15,7 @@ class EnvironmentNode(object):
 
 class BuildEnvironment(object):
     def __init__(self, path, keyfile):
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read(path)
 
         self.group = config.get('env', 'group')
@@ -85,7 +85,7 @@ class RemoteHostInterface(object):
     ):
         self.__handle_ssh_keys()
         exception_handlers = self.__get_connection_exception_handlers()
-        for attempt in xrange(max_connection_retry):
+        for attempt in range(max_connection_retry):
             try:
                 self.__establish_ssh_connection()
             except exception_handlers:

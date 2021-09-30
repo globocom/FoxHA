@@ -2,7 +2,7 @@ import time
 import re
 import pytest
 from foxha import fox
-import test_utils
+from . import test_utils
 
 
 def setup_module(module):

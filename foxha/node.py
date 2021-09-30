@@ -1,7 +1,7 @@
 from datetime import datetime
 from _mysql import OperationalError
-from query import Query
-from connection import Connection
+from .query import Query
+from .connection import Connection
 
 
 READ_ONLY_MYSQL_STATUS = 'ON'

@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 import _mysql as MySQLdb
 import MySQLdb.cursors
-from utils import Utils
+from .utils import Utils
 
 
 def from_config_file(cipher=None, config_path=None):

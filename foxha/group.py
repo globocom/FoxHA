@@ -1,6 +1,6 @@
-import node_utils
-from query import Query
-from errors import NoWriteNodeError, NoReadNodeError
+from . import node_utils
+from .query import Query
+from .errors import NoWriteNodeError, NoReadNodeError
 
 
 class Group(object):

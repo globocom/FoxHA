@@ -2,7 +2,7 @@ from foxha import fox
 from foxha import formatter
 from foxha import inner_logic
 from foxha.query import Query
-import test_utils
+from . import test_utils
 
 
 def build_message(group, node):

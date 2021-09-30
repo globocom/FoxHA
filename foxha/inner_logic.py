@@ -1,8 +1,8 @@
-from query import Query
-from group import Group
-from node import Node
-import node_utils
-from errors import ManyWriteNodesError, NoWriteNodeError, NodeIsDownError,\
+from .query import Query
+from .group import Group
+from .node import Node
+from . import node_utils
+from .errors import ManyWriteNodesError, NoWriteNodeError, NodeIsDownError,\
     IsNotMasterMasterEnvironmentError, ReplicationNotRunningError, \
     NodeWithDelayError, GroupNotFoundError, NodeNotFoundError, \
     GroupAlreadyAddedError, NodeAlreadyAddedError, GroupWithNodesError

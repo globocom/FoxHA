@@ -7,8 +7,8 @@ from foxha import __version__
 from .print_format import print_warning
 from .query import Query
 from .utils import Utils
-import formatter
-import connection
+from . import formatter
+from . import connection
 
 # Initializing global constants
 CIPHER_SUITE = None
@@ -212,7 +212,7 @@ def main(values=None):
             formatter.list_group(CONNECTION)
 
     if args.group:
-        if argument_vars.values().count(True) == 0 and args.set is None:
+        if list(argument_vars.values()).count(True) == 0 and args.set is None:
             print_warning("You could not specify [-g/--group] alone")
             exit(1)
         else:
