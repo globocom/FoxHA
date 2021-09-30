@@ -29,6 +29,9 @@ stop_test_env: # stop docker containers
 test: # run tests
 	@py.test -v --cov-config .coveragerc --cov-report html --cov foxha ./tests/
 
+shell:
+	@cd docker && docker-compose exec dbrepo bash
+
 release:
 	python setup.py sdist upload
 
