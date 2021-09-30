@@ -1,6 +1,6 @@
 enum34==1.0.4
 six==1.9.0
-#pyasn1==0.1.8
+pyasn1==0.4.8
 pycparser==2.14
 cffi==1.8.2
 cryptography==3.2
