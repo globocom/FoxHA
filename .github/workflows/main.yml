@@ -1,0 +1,32 @@
+name: Run Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    name: Test
+    env:
+      DOCKER_COMPOSE_VERSION: 1.11.2
+    steps:
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '2.7'
+    - name: Shutdown Ubuntu MySQL
+      run: sudo service mysql stop
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+    - name: Start test env
+      run: make start_test_env
+    - name: run tests
+      run: make test
+    - name: send codecov report
+      uses: codecov/codecov-action@v1
+      with:
+        files: ./dbaas/coverage.xml
+        flags: unittests 
+        name: codecov-umbrella 
+        fail_ci_if_error: true
+        verbose: true
+      
+    
