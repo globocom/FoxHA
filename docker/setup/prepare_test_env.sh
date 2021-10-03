@@ -89,7 +89,7 @@ fi
 ##               MAIN                ##
 #######################################
 
-if [ $ACTION == "start" ]; then
+if [[ $ACTION == "start" ]]; then
     docker_start
     keyfile_symlink
     config_mysql_repl db1 3308 db2
