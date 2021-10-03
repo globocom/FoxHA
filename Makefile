@@ -21,10 +21,10 @@ pip_test: # install pip test libraries
 	@pip install -r requirements-test.txt
 
 start_test_env: # start docker containers and configure test environment
-	@sh ./docker/setup/prepare_test_env.sh start
+	@./docker/setup/prepare_test_env.sh start
 
 stop_test_env: # stop docker containers
-	@sh ./docker/setup/prepare_test_env.sh stop
+	@./docker/setup/prepare_test_env.sh stop
 
 test: # run tests
 	@py.test -v --cov-config .coveragerc --cov-report html --cov foxha ./tests/
