@@ -17,7 +17,7 @@ jobs:
       with:
         fetch-depth: 1
     - name: update hosts
-      run: bash -c 'echo "127.0.0.1 db1 db2" >> /etc/hosts'
+      run: echo "127.0.0.1 db1 db2" | sudo tee -a /etc/hosts
     - name: Start test env
       run: make start_test_env
     - name: run tests
