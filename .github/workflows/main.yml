@@ -16,6 +16,8 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
+    - name: install requirements
+      run: make pip_test pip
     - name: update hosts
       run: echo "127.0.0.1 db1 db2" | sudo tee -a /etc/hosts
     - name: Start test env
