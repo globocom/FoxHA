@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/setup-python@v2
       with:
-        python-version: '2.7'
+        python-version: '3.6.7'
     - name: Shutdown Ubuntu MySQL
       run: sudo service mysql stop
     - name: Checkout Code
