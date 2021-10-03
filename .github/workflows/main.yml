@@ -16,6 +16,8 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
+    - name: update hosts
+      run: echo "127.0.0.1 db1 db2" >> /etc/hosts
     - name: Start test env
       run: make start_test_env
     - name: run tests
