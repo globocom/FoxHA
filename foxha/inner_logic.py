@@ -158,8 +158,10 @@ def add_group(
     connection.query(
         Query.SQL_INSERT_GROUP.format(
             group_name, description, vip_address,
-            mysql_user, connection.cipher.encrypt(mysql_password),
-            repl_user, connection.cipher.encrypt(repl_password)
+            mysql_user,
+            connection.cipher.encrypt(mysql_password.encode("utf8")).decode("utf8"),
+            repl_user,
+            connection.cipher.encrypt(repl_password.encode("utf8")).decode("utf8")
         )
     )
     return True

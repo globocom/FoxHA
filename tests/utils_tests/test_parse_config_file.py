@@ -13,7 +13,7 @@ def test_config_file_successfully(
     assert config_file[1] == config_file_dict['port']
     assert config_file[2] == config_file_dict['database']
     assert config_file[3] == config_file_dict['user']
-    assert config_file[4] == cipher_suite.decrypt(config_file_dict['password'])
+    assert config_file[4] == cipher_suite.decrypt(config_file_dict['password'].encode("utf8"))
 
 
 def test_config_file_throws_no_section_error(

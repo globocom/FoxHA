@@ -9,7 +9,7 @@ def test_version_message(capsys):
     assert str(e.value) == '0'
 
     out, err = capsys.readouterr()
-    assert __version__ in err
+    assert __version__ in out
 
 
 def test_can_get_config(environment, capsys):

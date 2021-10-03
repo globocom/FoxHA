@@ -59,6 +59,8 @@ class LogicalNode(object):
 
 class PhysicalNode(object):
     def __init__(self, ip, port, user, password, cipher):
+        if isinstance(password, bytes):
+            password = password.decode("utf8")
         self.node_connection = Connection(ip, port, '', user, password, cipher)
         self.mysql_user = user
         self.mysql_password = password
@@ -166,7 +168,7 @@ class Node(LogicalNode, PhysicalNode):
         )
         PhysicalNode.__init__(
             self, ip, result['node_port'], result['mysql_adm_user'],
-            fox_connection.cipher.decrypt(result['mysql_adm_pass']),
+            fox_connection.cipher.decrypt(result['mysql_adm_pass'].encode("utf8")).decode("utf8"),
             fox_connection.cipher
         )
 

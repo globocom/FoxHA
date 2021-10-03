@@ -35,7 +35,7 @@ class Utils(object):
             exit(99)
 
         try:
-            decrypted_repo_pass = cipher_suite.decrypt(encrypted_repo_pass)
+            decrypted_repo_pass = cipher_suite.decrypt(encrypted_repo_pass.encode("utf8"))
             return repo_host, repo_port, repo_database,\
                 repo_user, decrypted_repo_pass
         except InvalidToken as e:

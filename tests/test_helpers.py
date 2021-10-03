@@ -31,13 +31,13 @@ class BuildEnvironment(object):
         self.master_node = EnvironmentNode(
             self.master,
             config.get('env', 'master_ssh_user'),
-            cipher.decrypt(config.get('env', 'master_ssh_password')),
+            cipher.decrypt(config.get('env', 'master_ssh_password').encode("utf8")).decode("utf8"),
             config.get('env', 'master_ssh_port')
         )
         self.replication_node = EnvironmentNode(
             self.replication,
             config.get('env', 'slave_ssh_user'),
-            cipher.decrypt(config.get('env', 'slave_ssh_password')),
+            cipher.decrypt(config.get('env', 'slave_ssh_password').encode("utf8")).decode("utf8"),
             config.get('env', 'slave_ssh_port')
         )
 

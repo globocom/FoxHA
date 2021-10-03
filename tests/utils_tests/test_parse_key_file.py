@@ -53,7 +53,8 @@ def test_parse_empty_key_throws_type_error_exception(
 
     out, err = capsys.readouterr()
 
-    assert error_message == out
+    validate_error = str(out).endswith("may be empty because Incorrect padding\x1b[0m\n")
+    assert validate_error is True
     assert str(exec_info.value) == '3'
 
 
@@ -67,3 +68,4 @@ def test_key_value_from_key_file_throws_exception(utils,
 ):
     with pytest.raises(IOError):
         utils.get_key_value_from_key_file(connection_config_not_exist)
+ 

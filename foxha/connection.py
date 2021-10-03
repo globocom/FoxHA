@@ -21,8 +21,12 @@ class Connection(object):
         self.port = port
         self.database = database
         self.user = user
-        self.password = password
         self.cipher = cipher
+
+        if isinstance(password, bytes):
+            password = password.decode("utf8")
+
+        self.password = password
 
     @contextmanager
     def connect(self):

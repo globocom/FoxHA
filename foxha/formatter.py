@@ -134,7 +134,7 @@ def status_nodes(group, logger, connection):
             )
 
     print(status_table)
-    messages.sort(reverse=True)
+    messages.sort(key=lambda x: x['text'], reverse=True)
     for message in messages:
         if message['Err_Type'] == "Critical":
             print_error("{text}".format(**message))
