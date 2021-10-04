@@ -27,7 +27,7 @@ stop_test_env: # stop docker containers
 	@./docker/setup/prepare_test_env.sh stop
 
 test: # run tests
-	@py.test -v --cov-config .coveragerc --cov-report html --cov foxha ./tests/
+	@py.test -v --cov-config .coveragerc --cov-report html --cov foxha tests
 
 shell:
 	@cd docker && docker-compose exec dbrepo bash
