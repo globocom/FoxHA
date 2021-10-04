@@ -37,3 +37,9 @@ release:
 
 release_globo:
 	python setup.py sdist upload -r ipypiglobo
+
+develop:
+	@python setup.py develop
+
+install:
+	@python setup.py install -f

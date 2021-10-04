@@ -26,6 +26,8 @@ jobs:
       run: echo "127.0.0.1 db1 db2" | sudo tee -a /etc/hosts
     - name: Start test env
       run: make start_test_env
+    - name: install fox
+      run: make install
     - name: run tests
       run: make test
     - name: send codecov report
