@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/setup-python@v2
       with:
-        .7python-version: '3.6.7'
+        .python-version: '3.6.7'
     - name: install dependencies
       run: sudo apt-get update && sudo apt-get install -y python3-dev libmysqlclient-dev gcc build-essential
     - name: Shutdown Ubuntu MySQL
