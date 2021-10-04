@@ -11,7 +11,7 @@ jobs:
       with:
         .7python-version: '3.6.7'
     - name: install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libmysqlclient-dev gcc
+      run: sudo apt-get update && sudo apt-get install -y python3-dev libmysqlclient-dev gcc build-essential
     - name: Shutdown Ubuntu MySQL
       run: sudo service mysql stop
     - name: Checkout Code
