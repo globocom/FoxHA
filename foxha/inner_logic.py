@@ -74,8 +74,26 @@ def set_read_write(node, connection):
     set_read_only(node_write, connection)
     node.node_connection.execute(Query.SET_MODE % 'OFF')
     connection.query(Query.UPDATE_MODE % ('read_write', node.ip, node.group))
+    drop_connections(node_write, connection)
     return True
 
+def drop_connections(node, connection):
+    STATUS_TO_WAIT = ["INSERT", "UPDATE", 
+     "DELETE", "REPLACE", "CREATE", "DROP", "ALTER",
+     "REPAIR", "OPTIMIZE", "ANALYZE", "CHECK"]
+
+    current_max_connections = node.get_max_connections
+    print(node.process_list, node.get_max_connections)
+
+    # set max connections to 1 to drop new connections
+    process_list = node.node_connection.query(Query.SHOW_FULL_PROCESS_LIST)
+    #node.set_max_connections(1)
+    print(process_list)
+
+    # add it in finally
+    node.set_max_connections(current_max_connections)
+    print("DROP")
+    
 
 def set_read_only(node, connection):
     if node.is_mysql_status_down():
@@ -83,11 +101,12 @@ def set_read_only(node, connection):
 
     node.node_connection.query(Query.SET_MODE % 'ON')
     connection.query(Query.UPDATE_MODE % ('read_only', node.ip, node.group))
+   
     return True
 
 
 def switchover(group, connection):
-    get_write_node(group, connection)
+    a = get_write_node(group, connection)
 
     if not is_master_master(group, connection):
         raise IsNotMasterMasterEnvironmentError(group)
