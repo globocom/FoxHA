@@ -83,6 +83,9 @@ def drop_connections(node, connection):
      "REPAIR", "OPTIMIZE", "ANALYZE", "CHECK"]
 
     current_max_connections = node.get_max_connections
+    connection_id = node.connection_id
+    print(connection_id)
+    print(connection_id)
     print(node.process_list, node.get_max_connections)
 
     # set max connections to 1 to drop new connections

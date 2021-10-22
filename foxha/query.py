@@ -81,3 +81,4 @@ class Query:
     SQL_START_SLAVE = "START SLAVE"
     SQL_GET_MAX_CONNECTIONS = "SELECT @@max_connections;"
     SQL_SET_MAX_CONNECTIONS = "SET GLOBAL max_connections={};"
+    SQL_GET_CONNECTION_ID = "SELECT connection_id() as cid;"

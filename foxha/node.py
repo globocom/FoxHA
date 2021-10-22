@@ -182,7 +182,15 @@ class PhysicalNode(object):
             return None
         else:
             return result
-
+    
+    @property
+    def connection_id(self):
+        try:
+            result = self.node_connection.execute(Query.SQL_GET_CONNECTION_ID)[0]
+        except OperationalError:
+            return None
+        else:
+            return int(result['cid'])
 class Node(LogicalNode, PhysicalNode):
     def __init__(self, group, ip, fox_connection):
 
