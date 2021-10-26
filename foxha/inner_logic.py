@@ -81,26 +81,9 @@ def set_read_write(node, connection):
     return True
 
 def drop_connections(node):
-    STATUS_TO_WAIT = ["INSERT", "UPDATE", 
-     "DELETE", "REPLACE", "CREATE", "DROP", "ALTER",
-     "REPAIR", "OPTIMIZE", "ANALYZE", "CHECK"]
-
-    current_max_connections = node.get_max_connections
-    print("cur", node.connection_id)
-    # set max connections to 1 to drop new connections
-    print(node.process_list)
-
-    while len(node.process_list):
-        for conn in node.process_list:
-            if conn["info"] in STATUS_TO_WAIT:
-                continue
-
-            node.kill(conn["id"])
-        sleep(SLEEP_TIME)
-    # add it in finally
-    node.set_max_connections(current_max_connections)
-    print("cur", node.connection_id)
-    print("DROP")
+    EXCLUDE_USERS=",".join(['system user', 'heartbeat','replica', 'u_repl'])
+    for conn in node.process_list(EXCLUDE_USERS):
+        node.kill(conn["id"])
     
 
 def set_read_only(node, connection):

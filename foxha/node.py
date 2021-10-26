@@ -156,41 +156,14 @@ class PhysicalNode(object):
             return None
         else:
             return int(result['Master_Server_Id'])
-    
-    @property
-    def get_max_connections(self):
-        try:
-            result = self.node_connection.execute(Query.SQL_GET_MAX_CONNECTIONS)[0]
-        except OperationalError:
-            return None
-        else:
-            return int(result['@@max_connections'])
-    
-    def set_max_connections(self, max_conn):
-        try:
-            self.node_connection.execute(Query.SQL_SET_MAX_CONNECTIONS.format(max_conn))
-        except OperationalError:
-            return None
-        else:
-            return True
 
-    @property
-    def process_list(self):
+    def process_list(self, protected_users):
         try:
-            result = self.node_connection.execute(Query.SHOW_FULL_PROCESS_LIST)
+            result = self.node_connection.execute(Query.SHOW_FULL_PROCESS_LIST.format(protected_users))
         except OperationalError:
             return None
         else:
             return result
-    
-    @property
-    def connection_id(self):
-        try:
-            result = self.node_connection.execute(Query.SQL_GET_CONNECTION_ID)[0]
-        except OperationalError:
-            return None
-        else:
-            return int(result['cid'])
     
     def kill(self, conn_id):
         try:
