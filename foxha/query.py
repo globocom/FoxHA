@@ -6,7 +6,7 @@ class Query:
     SHOW_GLOBAL_STATUS_READ = "SHOW GLOBAL VARIABLES LIKE 'read_only';"
     SHOW_MASTER_STATUS = "SHOW MASTER STATUS;"
     SHOW_GLOBAL_SERVER_ID = "SHOW GLOBAL VARIABLES LIKE 'server_id';"
-    SHOW_FULL_PROCESS_LIST = "SHOW FULL PROCESSLIST;"
+    SHOW_FULL_PROCESS_LIST = "SELECT id, info, user FROM information_schema.processlist WHERE id<>connection_id() AND user NOT IN ('system user', 'heartbeat','replica', 'u_repl','usr_zabbix');"
     SQL_MYSQL_VERSION = "SELECT SUBSTRING(@@version,1,3) as mysql_version;"
     SQL_REPO = "SELECT n.servername,n.node_ip,n.node_port,n.mode,g.mysql_adm_user,\
     g.mysql_adm_pass,g.mysql_repl_user,g.mysql_repl_pass FROM repl_nodes n \
@@ -82,3 +82,4 @@ class Query:
     SQL_GET_MAX_CONNECTIONS = "SELECT @@max_connections;"
     SQL_SET_MAX_CONNECTIONS = "SET GLOBAL max_connections={};"
     SQL_GET_CONNECTION_ID = "SELECT connection_id() as cid;"
+    SQL_KILL_CONNECTION = "KILL {}"

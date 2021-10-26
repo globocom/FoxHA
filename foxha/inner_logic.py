@@ -1,3 +1,4 @@
+from time import sleep
 from .query import Query
 from .group import Group
 from .node import Node
@@ -7,6 +8,8 @@ from .errors import ManyWriteNodesError, NoWriteNodeError, NodeIsDownError,\
     NodeWithDelayError, GroupNotFoundError, NodeNotFoundError, \
     GroupAlreadyAddedError, NodeAlreadyAddedError, GroupWithNodesError
 
+
+SLEEP_TIME = 1
 
 def get_nodes(group, connection):
     return node_utils.get_all_nodes(group, connection)
@@ -74,27 +77,29 @@ def set_read_write(node, connection):
     set_read_only(node_write, connection)
     node.node_connection.execute(Query.SET_MODE % 'OFF')
     connection.query(Query.UPDATE_MODE % ('read_write', node.ip, node.group))
-    drop_connections(node_write, connection)
+    drop_connections(node_write)
     return True
 
-def drop_connections(node, connection):
+def drop_connections(node):
     STATUS_TO_WAIT = ["INSERT", "UPDATE", 
      "DELETE", "REPLACE", "CREATE", "DROP", "ALTER",
      "REPAIR", "OPTIMIZE", "ANALYZE", "CHECK"]
 
     current_max_connections = node.get_max_connections
-    connection_id = node.connection_id
-    print(connection_id)
-    print(connection_id)
-    print(node.process_list, node.get_max_connections)
-
+    print("cur", node.connection_id)
     # set max connections to 1 to drop new connections
-    process_list = node.node_connection.query(Query.SHOW_FULL_PROCESS_LIST)
-    #node.set_max_connections(1)
-    print(process_list)
+    print(node.process_list)
 
+    while len(node.process_list):
+        for conn in node.process_list:
+            if conn["info"] in STATUS_TO_WAIT:
+                continue
+
+            node.kill(conn["id"])
+        sleep(SLEEP_TIME)
     # add it in finally
     node.set_max_connections(current_max_connections)
+    print("cur", node.connection_id)
     print("DROP")
     
 

@@ -191,6 +191,15 @@ class PhysicalNode(object):
             return None
         else:
             return int(result['cid'])
+    
+    def kill(self, conn_id):
+        try:
+            self.node_connection.execute(Query.SQL_KILL_CONNECTION.format(conn_id))
+        except OperationalError:
+            return False
+        else:
+            return True
+
 class Node(LogicalNode, PhysicalNode):
     def __init__(self, group, ip, fox_connection):
 
