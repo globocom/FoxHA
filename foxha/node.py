@@ -2,6 +2,8 @@ from datetime import datetime
 from _mysql import OperationalError
 from .query import Query
 from .connection import Connection
+from os.path import exists
+import yaml
 
 
 READ_ONLY_MYSQL_STATUS = 'ON'
@@ -64,6 +66,16 @@ class PhysicalNode(object):
         self.node_connection = Connection(ip, port, '', user, password, cipher)
         self.mysql_user = user
         self.mysql_password = password
+
+    @property
+    def config(self):
+        conf_file = "config/node_config.yml"
+
+        if not exists(conf_file):
+            raise FileNotFoundError("Config file %s does not exists." % conf_file)
+
+        with open(conf_file) as f:
+            return yaml.safe_load(f)
 
     @property
     def mysql_status(self):

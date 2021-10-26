@@ -81,7 +81,7 @@ def set_read_write(node, connection):
     return True
 
 def drop_connections(node):
-    EXCLUDE_USERS=",".join(['system user', 'heartbeat','replica', 'u_repl'])
+    EXCLUDE_USERS=",".join(['"%s"' % x for x in node.config['protected_users']])
     for conn in node.process_list(EXCLUDE_USERS):
         node.kill(conn["id"])
     
