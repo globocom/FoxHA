@@ -10,6 +10,10 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.6.7'
+    - name: Update timezone
+      uses: szenius/set-timezone@v1.0
+      with:
+        timezoneLinux: "America/Sao_Paulo"
     - name: install dependencies
       run: sudo apt-get update && sudo apt-get install -y python3-dev libmysqlclient-dev gcc build-essential
     - name: Shutdown Ubuntu MySQL
