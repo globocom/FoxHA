@@ -1,3 +1,4 @@
+[![Run Tests](https://github.com/globocom/FoxHA/actions/workflows/main.yml/badge.svg)](https://github.com/globocom/FoxHA/actions/workflows/main.yml) [![codecov](https://codecov.io/gh/globocom/FoxHA/branch/master/graph/badge.svg?token=q825zxYwCN)](https://codecov.io/gh/globocom/FoxHA)
 # Introduction 
  
 FoxHA was designed with the goal of replacing the Flipper as a more robust high availability 
