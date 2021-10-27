@@ -30,8 +30,8 @@ def set_read_write(group_name, nodeip):
     return formatter.set_read_write(group_name, nodeip, CONNECTION, LOGGER)
 
 
-def switchover(group_name, KILL):
-    formatter.switchover(group_name, CONNECTION, LOGGER, kill=KILL)
+def switchover(group_name, kill=False):
+    formatter.switchover(group_name, CONNECTION, LOGGER, kill=kill)
 
 
 def failover(group_name):

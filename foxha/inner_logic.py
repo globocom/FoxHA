@@ -51,7 +51,7 @@ def is_master_master(group, connection):
     return False
 
 
-def set_read_write(node, connection, kill):
+def set_read_write(node, connection, kill=False):
     if node.is_mysql_status_down():
         raise NodeIsDownError(node.ip)
 
