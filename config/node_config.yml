@@ -1,0 +1,6 @@
+protected_users:
+  - u_repl
+  - system user
+  - heartbeat
+  - replica
+  - root
