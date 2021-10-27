@@ -74,11 +74,10 @@ def set_read_write(node, connection, kill):
     if node.seconds_behind > 0:
         raise NodeWithDelayError(node.ip, node.seconds_behind)
 
-    set_read_only(node_write, connection)
+    set_read_only(node_write, connection, kill)
     node.node_connection.execute(Query.SET_MODE % 'OFF')
     connection.query(Query.UPDATE_MODE % ('read_write', node.ip, node.group))
-    if kill:
-        drop_connections(node_write)
+    
     return True
 
 def drop_connections(node):
@@ -87,13 +86,16 @@ def drop_connections(node):
         node.kill(conn["id"])
     
 
-def set_read_only(node, connection):
+def set_read_only(node, connection, kill=False):
     if node.is_mysql_status_down():
         raise NodeIsDownError(node.ip)
 
     node.node_connection.query(Query.SET_MODE % 'ON')
     connection.query(Query.UPDATE_MODE % ('read_only', node.ip, node.group))
-    
+
+    if kill:
+        drop_connections(node)
+
     return True
 
 

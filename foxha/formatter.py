@@ -209,11 +209,11 @@ def set_read_write(group, node_ip, connection, logger):
     return False
 
 
-def set_read_only(group, node_ip, connection, logger):
+def set_read_only(group, node_ip, connection, logger, kill=False):
     node = Node(group, node_ip, connection)
 
     try:
-        if inner_logic.set_read_only(node, connection):
+        if inner_logic.set_read_only(node, connection, kill=kill):
             logger.info(
                 'Node: "{}" defined as "read_only" '
                 'at group_name: "{}"'.format(node.ip, node.group)

@@ -22,8 +22,8 @@ def check_node_exist(group_name, nodeip, plus_failed=False):
     )
 
 
-def set_read_only(group_name, nodeip):
-    return formatter.set_read_only(group_name, nodeip, CONNECTION, LOGGER)
+def set_read_only(group_name, nodeip, kill=False):
+    return formatter.set_read_only(group_name, nodeip, CONNECTION, LOGGER, kill=kill)
 
 
 def set_read_write(group_name, nodeip):
@@ -69,9 +69,9 @@ def set_status(group_name, nodeip, status):
         CONNECTION.query(Query.UPDATE_STATE % (status, nodeip, group_name))
 
 
-def set(set, group_name, nodeip):
+def set(set, group_name, nodeip, kill=False):
     if set == 'read_only':
-        set_read_only(group_name, nodeip)
+        set_read_only(group_name, nodeip, kill=kill)
     elif set == 'read_write':
         set_read_write(group_name, nodeip)
     elif set == 'disabled' or set == 'failed' or set == 'enabled':
@@ -211,8 +211,8 @@ def main(values=None):
         exit(1)
     
     if args.kill:
-        if not any([args.switchover]):
-            raise Exception("Kill parameter only works on switchover command")
+        if not any([args.switchover, args.set=="read_only"]):
+            raise Exception("Kill parameter only works on switchover or set read only commands")
 
     if args.list:
         if args.group:
@@ -237,7 +237,7 @@ def main(values=None):
         if args.nodeip:
             if args.set in ('disabled', 'enabled', 'failed', 'read_only'):
                 if check_node_exist(arg_group_name, args.nodeip, plus_failed=True):
-                    set(args.set, arg_group_name, args.nodeip)
+                    set(args.set, arg_group_name, args.nodeip, kill=args.set == "read_only" and args.kill)
             else:  # args.set in ('read_write')
                 if check_node_exist(arg_group_name, args.nodeip, plus_failed=False):
                     set(args.set, arg_group_name, args.nodeip)
