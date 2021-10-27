@@ -14,6 +14,8 @@ jobs:
       uses: szenius/set-timezone@v1.0
       with:
         timezoneLinux: "America/Sao_Paulo"
+    - name: Check timezone
+      run: date
     - name: install dependencies
       run: sudo apt-get update && sudo apt-get install -y python3-dev libmysqlclient-dev gcc build-essential
     - name: Shutdown Ubuntu MySQL
