@@ -31,7 +31,7 @@ def set_read_write(group_name, nodeip):
 
 
 def switchover(group_name, KILL):
-    formatter.switchover(group_name, KILL, CONNECTION, LOGGER)
+    formatter.switchover(group_name, CONNECTION, LOGGER, kill=KILL)
 
 
 def failover(group_name):
@@ -209,6 +209,10 @@ def main(values=None):
     if args.nodeip and args.set is None:
         print_warning("[-n/--node] specified out of context.")
         exit(1)
+    
+    if args.kill:
+        if not any([args.switchover]):
+            raise Exception("Kill parameter only works on switchover command")
 
     if args.list:
         if args.group:

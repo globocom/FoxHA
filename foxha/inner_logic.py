@@ -51,7 +51,7 @@ def is_master_master(group, connection):
     return False
 
 
-def set_read_write(node, kill, connection):
+def set_read_write(node, connection, kill):
     if node.is_mysql_status_down():
         raise NodeIsDownError(node.ip)
 
@@ -97,7 +97,7 @@ def set_read_only(node, connection):
     return True
 
 
-def switchover(group, kill, connection):
+def switchover(group, connection, kill=False):
     a = get_write_node(group, connection)
 
     if not is_master_master(group, connection):
@@ -105,7 +105,7 @@ def switchover(group, kill, connection):
 
     for node in get_enabled_nodes(group, connection):
         if not node.is_read_write():
-            if set_read_write(node, kill, connection):
+            if set_read_write(node, connection, kill):
                 break
 
     return True
