@@ -231,9 +231,9 @@ def set_read_only(group, node_ip, connection, logger):
     return False
 
 
-def switchover(group, connection, logger):
+def switchover(group, kill, connection, logger):
     try:
-        inner_logic.switchover(group, connection)
+        inner_logic.switchover(group, kill, connection)
     except NoWriteNodeError:
         print_warning(
             'There isn\'t any node with the "read_write" mode. '

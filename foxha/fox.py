@@ -30,8 +30,8 @@ def set_read_write(group_name, nodeip):
     return formatter.set_read_write(group_name, nodeip, CONNECTION, LOGGER)
 
 
-def switchover(group_name):
-    formatter.switchover(group_name, CONNECTION, LOGGER)
+def switchover(group_name, KILL):
+    formatter.switchover(group_name, KILL, CONNECTION, LOGGER)
 
 
 def failover(group_name):
@@ -151,6 +151,11 @@ def fox_arg_parse():
         type=int,
         help="log file retention in days - Default: 4 days plus current",
         action="store")
+    parser.add_argument(
+        "-k",
+        "--kill",
+        help="Kill database connections when switch",
+        action="store_true")
     return parser
 
 
@@ -240,7 +245,7 @@ def main(values=None):
         formatter.status_nodes(arg_group_name, LOGGER, CONNECTION)
 
     if args.switchover:
-        switchover(arg_group_name)
+        switchover(arg_group_name, args.kill)
 
     if args.failover:
         failover(arg_group_name)
