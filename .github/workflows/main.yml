@@ -39,7 +39,6 @@ jobs:
     - name: send codecov report
       uses: codecov/codecov-action@v1
       with:
-        files: ./dbaas/coverage.xml
         flags: unittests 
         name: codecov-umbrella 
         fail_ci_if_error: true
