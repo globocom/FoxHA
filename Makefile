@@ -32,11 +32,18 @@ test: # run tests
 shell:
 	@cd docker && docker-compose exec dbrepo bash
 
-release:
-	python setup.py sdist upload
+release: clean
+	python setup.py sdist bdist_wheel
+	twine upload dist/*
 
-release_globo:
-	python setup.py sdist upload -r ipypiglobo
+release_globo: clean
+	python setup.py sdist bdist_wheel
+	twine upload --repository-url https://artifactory.globoi.com/artifactory/api/pypi/pypi-local dist/*
+
+dist: clean
+	python setup.py sdist
+	python setup.py bdist_wheel
+	ls -l dist
 
 develop:
 	@python setup.py develop
