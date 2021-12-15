@@ -21,16 +21,32 @@ pip_test: # install pip test libraries
 	@pip install -r requirements-test.txt
 
 start_test_env: # start docker containers and configure test environment
-	@sh ./docker/setup/prepare_test_env.sh start
+	@./docker/setup/prepare_test_env.sh start
 
 stop_test_env: # stop docker containers
-	@sh ./docker/setup/prepare_test_env.sh stop
+	@./docker/setup/prepare_test_env.sh stop
 
 test: # run tests
-	@py.test -v --cov-config .coveragerc --cov-report html --cov foxha ./tests/
+	@py.test -v --cov-config .coveragerc --cov-report xml --cov foxha tests
 
-release:
-	python setup.py sdist upload
+shell:
+	@cd docker && docker-compose exec dbrepo bash
 
-release_globo:
-	python setup.py sdist upload -r ipypiglobo
+release: clean
+	python setup.py sdist bdist_wheel
+	twine upload dist/*
+
+release_globo: clean
+	python setup.py sdist bdist_wheel
+	twine upload --repository-url https://artifactory.globoi.com/artifactory/api/pypi/pypi-local dist/*
+
+dist: clean
+	python setup.py sdist
+	python setup.py bdist_wheel
+	ls -l dist
+
+develop:
+	@python setup.py develop
+
+install:
+	@python setup.py install -f

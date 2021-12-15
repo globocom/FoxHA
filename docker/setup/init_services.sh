@@ -12,6 +12,10 @@ mysql_conn_string="mysql -uroot -ptest123 --silent --force -b"
 # Define a random server_id for MySQL if not defined yet
 grep -q -F "server_id" $MYCNF || echo "server_id = $RANDOM" >> $MYCNF
 
+usermod -d /var/lib/mysql/ mysql
+
+
+
 # Starting services
 service ssh start
 service monit start

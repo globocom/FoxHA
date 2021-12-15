@@ -6,7 +6,7 @@ from foxha.node import LogicalNode
 from foxha.errors import GroupNotFoundError, NodeNotFoundError, \
     NoWriteNodeError, ManyWriteNodesError, NodeIsDownError, \
     ReplicationNotRunningError, IsNotMasterMasterEnvironmentError
-import test_utils
+from . import test_utils
 
 
 def setup_module(module):

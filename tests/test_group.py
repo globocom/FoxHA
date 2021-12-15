@@ -1,7 +1,7 @@
 import pytest
 from foxha.group import Group
 import foxha.fox
-import test_utils
+from . import test_utils
 from foxha.errors import NoWriteNodeError, NoReadNodeError
 
 

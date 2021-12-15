@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import ConfigParser
+import configparser
 import logging
 from logging import handlers
 from os import path
@@ -27,15 +27,15 @@ class Utils(object):
             repo_host, repo_port, repo_database, repo_user,\
                 encrypted_repo_pass =\
                 Utils.get_config_values_from_config_file(config_file)
-        except (ConfigParser.NoSectionError) as err:
+        except (configparser.NoSectionError) as err:
             print_error("Config file error: {}".format(err))
             exit(99)
-        except (ConfigParser.NoOptionError) as err:
+        except (configparser.NoOptionError) as err:
             print_error("Config file error: {}".format(err))
             exit(99)
 
         try:
-            decrypted_repo_pass = cipher_suite.decrypt(encrypted_repo_pass)
+            decrypted_repo_pass = cipher_suite.decrypt(encrypted_repo_pass.encode("utf8"))
             return repo_host, repo_port, repo_database,\
                 repo_user, decrypted_repo_pass
         except InvalidToken as e:
@@ -47,7 +47,7 @@ class Utils(object):
 
     @staticmethod
     def get_config_values_from_config_file(config_file):
-        config_parser = ConfigParser.ConfigParser()
+        config_parser = configparser.ConfigParser()
         config_parser.read(config_file)
 
         return config_parser.get('repository', 'Host'),\
@@ -91,7 +91,7 @@ class Utils(object):
             f.write(key + '\n')
             f.close()
             keyfile_path = path.abspath(keyfile)
-            print "New keyfile generated at %s" % keyfile_path
+            print("New keyfile generated at %s" % keyfile_path)
         except Exception as e:
             print_error("ERROR: %s" % e)
             exit(3)
@@ -100,7 +100,7 @@ class Utils(object):
     def crypt_pass(cipher_suite, password):
         try:
             cipher_text = cipher_suite.encrypt(password)
-            print cipher_text
+            print(cipher_text)
         except InvalidToken as e:
             print_error("ERROR: InvalidToken")
             exit(99)
@@ -109,7 +109,7 @@ class Utils(object):
     def decrypt_pass(cipher_suite, password):
         try:
             cipher_text = cipher_suite.decrypt(password)
-            print cipher_text
+            print(cipher_text)
         except InvalidToken as e:
             print_error("ERROR: InvalidToken")
             exit(99)

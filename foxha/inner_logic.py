@@ -1,12 +1,15 @@
-from query import Query
-from group import Group
-from node import Node
-import node_utils
-from errors import ManyWriteNodesError, NoWriteNodeError, NodeIsDownError,\
+from time import sleep
+from .query import Query
+from .group import Group
+from .node import Node
+from . import node_utils
+from .errors import ManyWriteNodesError, NoWriteNodeError, NodeIsDownError,\
     IsNotMasterMasterEnvironmentError, ReplicationNotRunningError, \
     NodeWithDelayError, GroupNotFoundError, NodeNotFoundError, \
     GroupAlreadyAddedError, NodeAlreadyAddedError, GroupWithNodesError
 
+
+SLEEP_TIME = 1
 
 def get_nodes(group, connection):
     return node_utils.get_all_nodes(group, connection)
@@ -48,7 +51,7 @@ def is_master_master(group, connection):
     return False
 
 
-def set_read_write(node, connection):
+def set_read_write(node, connection, kill=False):
     if node.is_mysql_status_down():
         raise NodeIsDownError(node.ip)
 
@@ -71,30 +74,40 @@ def set_read_write(node, connection):
     if node.seconds_behind > 0:
         raise NodeWithDelayError(node.ip, node.seconds_behind)
 
-    set_read_only(node_write, connection)
+    set_read_only(node_write, connection, kill)
     node.node_connection.execute(Query.SET_MODE % 'OFF')
     connection.query(Query.UPDATE_MODE % ('read_write', node.ip, node.group))
+    
     return True
 
+def drop_connections(node):
+    EXCLUDE_USERS=",".join(['"%s"' % x for x in node.config['protected_users']])
+    for conn in node.process_list(EXCLUDE_USERS):
+        node.kill(conn["id"])
+    
 
-def set_read_only(node, connection):
+def set_read_only(node, connection, kill=False):
     if node.is_mysql_status_down():
         raise NodeIsDownError(node.ip)
 
     node.node_connection.query(Query.SET_MODE % 'ON')
     connection.query(Query.UPDATE_MODE % ('read_only', node.ip, node.group))
+
+    if kill:
+        drop_connections(node)
+
     return True
 
 
-def switchover(group, connection):
-    get_write_node(group, connection)
+def switchover(group, connection, kill=False):
+    a = get_write_node(group, connection)
 
     if not is_master_master(group, connection):
         raise IsNotMasterMasterEnvironmentError(group)
 
     for node in get_enabled_nodes(group, connection):
         if not node.is_read_write():
-            if set_read_write(node, connection):
+            if set_read_write(node, connection, kill):
                 break
 
     return True
@@ -158,8 +171,10 @@ def add_group(
     connection.query(
         Query.SQL_INSERT_GROUP.format(
             group_name, description, vip_address,
-            mysql_user, connection.cipher.encrypt(mysql_password),
-            repl_user, connection.cipher.encrypt(repl_password)
+            mysql_user,
+            connection.cipher.encrypt(mysql_password.encode("utf8")).decode("utf8"),
+            repl_user,
+            connection.cipher.encrypt(repl_password.encode("utf8")).decode("utf8")
         )
     )
     return True

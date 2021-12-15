@@ -1,0 +1,47 @@
+name: Run Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    name: Test
+    env:
+      DOCKER_COMPOSE_VERSION: 1.29.2
+    steps:
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.6.7'
+    - name: Update timezone
+      uses: szenius/set-timezone@v1.0
+      with:
+        timezoneLinux: "America/Sao_Paulo"
+    - name: Check timezone
+      run: date
+    - name: install dependencies
+      run: sudo apt-get update && sudo apt-get install -y python3-dev libmysqlclient-dev gcc build-essential
+    - name: Shutdown Ubuntu MySQL
+      run: sudo service mysql stop
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+    - name: upgrade pip
+      run: pip install --upgrade pip
+    - name: install requirements
+      run: make pip_test pip
+    - name: update hosts
+      run: echo "127.0.0.1 db1 db2" | sudo tee -a /etc/hosts
+    - name: Start test env
+      run: make start_test_env
+    - name: install fox
+      run: make install
+    - name: run tests
+      run: make test
+    - name: send codecov report
+      uses: codecov/codecov-action@v1
+      with:
+        flags: unittests 
+        name: codecov-umbrella 
+        fail_ci_if_error: true
+        verbose: true
+      
+    

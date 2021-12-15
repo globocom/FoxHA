@@ -2,8 +2,8 @@ import time
 import pytest
 from foxha.node import Node, PhysicalNode
 from foxha.utils import Utils
-import conftest
-import test_utils
+from . import conftest
+from . import test_utils
 
 
 @pytest.fixture
@@ -109,3 +109,7 @@ def test_server_none_with_node_down(environment, physical_replication_node):
     assert not physical_replication_node.master
     assert not physical_replication_node.server_id
     assert not physical_replication_node.master_server_id
+
+
+def test_node_conf(environment, physical_replication_node):
+    assert 'protected_users' in physical_replication_node.config

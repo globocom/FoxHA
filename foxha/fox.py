@@ -7,8 +7,8 @@ from foxha import __version__
 from .print_format import print_warning
 from .query import Query
 from .utils import Utils
-import formatter
-import connection
+from . import formatter
+from . import connection
 
 # Initializing global constants
 CIPHER_SUITE = None
@@ -22,16 +22,16 @@ def check_node_exist(group_name, nodeip, plus_failed=False):
     )
 
 
-def set_read_only(group_name, nodeip):
-    return formatter.set_read_only(group_name, nodeip, CONNECTION, LOGGER)
+def set_read_only(group_name, nodeip, kill=False):
+    return formatter.set_read_only(group_name, nodeip, CONNECTION, LOGGER, kill=kill)
 
 
 def set_read_write(group_name, nodeip):
     return formatter.set_read_write(group_name, nodeip, CONNECTION, LOGGER)
 
 
-def switchover(group_name):
-    formatter.switchover(group_name, CONNECTION, LOGGER)
+def switchover(group_name, kill=False):
+    formatter.switchover(group_name, CONNECTION, LOGGER, kill=kill)
 
 
 def failover(group_name):
@@ -69,9 +69,9 @@ def set_status(group_name, nodeip, status):
         CONNECTION.query(Query.UPDATE_STATE % (status, nodeip, group_name))
 
 
-def set(set, group_name, nodeip):
+def set(set, group_name, nodeip, kill=False):
     if set == 'read_only':
-        set_read_only(group_name, nodeip)
+        set_read_only(group_name, nodeip, kill=kill)
     elif set == 'read_write':
         set_read_write(group_name, nodeip)
     elif set == 'disabled' or set == 'failed' or set == 'enabled':
@@ -151,6 +151,11 @@ def fox_arg_parse():
         type=int,
         help="log file retention in days - Default: 4 days plus current",
         action="store")
+    parser.add_argument(
+        "-k",
+        "--kill",
+        help="Kill database connections when switch",
+        action="store_true")
     return parser
 
 
@@ -204,6 +209,10 @@ def main(values=None):
     if args.nodeip and args.set is None:
         print_warning("[-n/--node] specified out of context.")
         exit(1)
+    
+    if args.kill:
+        if not any([args.switchover, args.set=="read_only"]):
+            raise Exception("Kill parameter only works on switchover or set read only commands")
 
     if args.list:
         if args.group:
@@ -212,7 +221,7 @@ def main(values=None):
             formatter.list_group(CONNECTION)
 
     if args.group:
-        if argument_vars.values().count(True) == 0 and args.set is None:
+        if list(argument_vars.values()).count(True) == 0 and args.set is None:
             print_warning("You could not specify [-g/--group] alone")
             exit(1)
         else:
@@ -228,7 +237,7 @@ def main(values=None):
         if args.nodeip:
             if args.set in ('disabled', 'enabled', 'failed', 'read_only'):
                 if check_node_exist(arg_group_name, args.nodeip, plus_failed=True):
-                    set(args.set, arg_group_name, args.nodeip)
+                    set(args.set, arg_group_name, args.nodeip, kill=args.set == "read_only" and args.kill)
             else:  # args.set in ('read_write')
                 if check_node_exist(arg_group_name, args.nodeip, plus_failed=False):
                     set(args.set, arg_group_name, args.nodeip)
@@ -240,7 +249,7 @@ def main(values=None):
         formatter.status_nodes(arg_group_name, LOGGER, CONNECTION)
 
     if args.switchover:
-        switchover(arg_group_name)
+        switchover(arg_group_name, args.kill)
 
     if args.failover:
         failover(arg_group_name)

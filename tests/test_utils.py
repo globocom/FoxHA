@@ -3,8 +3,8 @@ import pytest
 import time
 from foxha import fox
 from foxha import formatter
-import conftest
-from test_helpers import RemoteHostInterface
+from . import conftest
+from .test_helpers import RemoteHostInterface
 
 
 MYSQL_STOP_CMD = '/etc/init.d/mysql stop'
@@ -177,7 +177,7 @@ def is_replication_ok(environment, capsys):
 
 
 def wait_for_replication_ok(environment, capsys):
-    for _ in xrange(12):
+    for _ in range(12):
         if is_replication_ok(environment, capsys):
             break
         time.sleep(5)

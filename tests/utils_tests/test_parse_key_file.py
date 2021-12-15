@@ -15,7 +15,7 @@ def test_parse_key_throws_IO_error(utils, capsys, connection_config_not_exist):
     with pytest.raises(SystemExit) as exec_info:
         utils.parse_key_file(file_path)
 
-    error_message = u'\x1b[38;5;160mERROR: "{}" file does not exist or you'\
+    error_message = '\x1b[38;5;160mERROR: "{}" file does not exist or you'\
         ' don`t have permission to read it.\x1b[0m'.format(file_path)
     out, err = capsys.readouterr()
 
@@ -30,7 +30,7 @@ def test_parse_empty_key_throws_exception(utils, capsys,
     with pytest.raises(SystemExit) as exec_info:
         utils.parse_key_file(keyfile=file_path)
 
-    error_message = u'\x1b[38;5;160mERROR: {} may be empty because'\
+    error_message = '\x1b[38;5;160mERROR: {} may be empty because'\
         ' Fernet key must be 32 url-safe base64-encoded'\
         ' bytes.\x1b[0m\n'.format(file_path)
 
@@ -48,12 +48,13 @@ def test_parse_empty_key_throws_type_error_exception(
         utils.parse_key_file(keyfile=file_path)
 
     key = utils.get_key_value_from_key_file(file_path)
-    error_message = u'\x1b[38;5;160mERROR: {} is not a valid key'\
+    error_message = '\x1b[38;5;160mERROR: {} is not a valid key'\
         ' because Incorrect padding\x1b[0m\n'.format(key)
 
     out, err = capsys.readouterr()
 
-    assert error_message == out
+    validate_error = str(out).endswith("may be empty because Incorrect padding\x1b[0m\n")
+    assert validate_error is True
     assert str(exec_info.value) == '3'
 
 
@@ -67,3 +68,4 @@ def test_key_value_from_key_file_throws_exception(utils,
 ):
     with pytest.raises(IOError):
         utils.get_key_value_from_key_file(connection_config_not_exist)
+ 

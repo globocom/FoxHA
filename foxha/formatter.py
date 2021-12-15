@@ -1,17 +1,17 @@
 from prettytable import PrettyTable
-from print_format import fore_red, fore_green, print_error, print_warning
+from .print_format import fore_red, fore_green, print_error, print_warning
 
-import inner_logic
-from errors import ManyWriteNodesError, NoWriteNodeError, NodeIsDownError,\
+from . import inner_logic
+from .errors import ManyWriteNodesError, NoWriteNodeError, NodeIsDownError,\
     ReplicationNotRunningError, NodeWithDelayError, GroupNotFoundError,\
     IsNotMasterMasterEnvironmentError, NodeNotFoundError
 
-from node import Node
+from .node import Node
 
 
 def list_group(connection):
     for group in inner_logic.get_groups(connection):
-        print "* {}".format(group.name)
+        print(("* {}".format(group.name)))
     exit(0)
 
 
@@ -25,7 +25,7 @@ def list_nodes(group, connection):
             status = fore_green(node.fox_status)
         list_table.add_row([group, node.address, status])
 
-    print list_table
+    print(list_table)
     exit(0)
 
 
@@ -133,8 +133,8 @@ def status_nodes(group, logger, connection):
                 )
             )
 
-    print status_table
-    messages.sort(reverse=True)
+    print(status_table)
+    messages.sort(key=lambda x: x['text'], reverse=True)
     for message in messages:
         if message['Err_Type'] == "Critical":
             print_error("{text}".format(**message))
@@ -209,11 +209,11 @@ def set_read_write(group, node_ip, connection, logger):
     return False
 
 
-def set_read_only(group, node_ip, connection, logger):
+def set_read_only(group, node_ip, connection, logger, kill=False):
     node = Node(group, node_ip, connection)
 
     try:
-        if inner_logic.set_read_only(node, connection):
+        if inner_logic.set_read_only(node, connection, kill=kill):
             logger.info(
                 'Node: "{}" defined as "read_only" '
                 'at group_name: "{}"'.format(node.ip, node.group)
@@ -231,9 +231,9 @@ def set_read_only(group, node_ip, connection, logger):
     return False
 
 
-def switchover(group, connection, logger):
+def switchover(group, connection, logger, kill=False):
     try:
-        inner_logic.switchover(group, connection)
+        inner_logic.switchover(group, connection, kill)
     except NoWriteNodeError:
         print_warning(
             'There isn\'t any node with the "read_write" mode. '
@@ -349,23 +349,21 @@ def config(group_name, connection, logger):
             'There is no group_name identified by "{}"'.format(group_name)
         )
     else:
-        print \
-            "GROUP_NAME: {}" \
+        print(("GROUP_NAME: {}" \
             "\n\tDescription: {} " \
             "\n\tfqdn_vip: {} " \
             "\n\tmysql_adm_user: {}" \
             "\n\tmysql_repl_user: {}".format(
                 group.name, group.description, group.vip_address,
                 group.mysql_adm_user, group.mysql_repl_user
-            )
+            )))
 
         for node in group.nodes:
-            print \
-                "NODE: [{}]" \
+            print(("NODE: [{}]" \
                 "\n\tip: {}" \
                 "\n\tport: {}" \
                 "\n\tmode: {}" \
                 "\n\tstatus: {}".format(
                     node.name, node.ip, node.port,
                     node.fox_mode, node.fox_status
-                )
+                )))

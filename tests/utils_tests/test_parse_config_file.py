@@ -1,4 +1,4 @@
-import ConfigParser
+import configparser
 import pytest
 
 
@@ -13,7 +13,7 @@ def test_config_file_successfully(
     assert config_file[1] == config_file_dict['port']
     assert config_file[2] == config_file_dict['database']
     assert config_file[3] == config_file_dict['user']
-    assert config_file[4] == cipher_suite.decrypt(config_file_dict['password'])
+    assert config_file[4] == cipher_suite.decrypt(config_file_dict['password'].encode("utf8"))
 
 
 def test_config_file_throws_no_section_error(
@@ -24,7 +24,7 @@ def test_config_file_throws_no_section_error(
             cipher_suite, connection_config_without_section
         )
 
-    error_message = u"\x1b[38;5;160mConfig file error: No section:"\
+    error_message = "\x1b[38;5;160mConfig file error: No section:"\
         " 'repository'\x1b[0m\n"
 
     out, err = capsys.readouterr()
@@ -40,7 +40,7 @@ def test_config_file_throws_no_option_error(
             cipher_suite, connection_config_without_option
         )
 
-    error_message = u"\x1b[38;5;160mConfig file error: No option"\
+    error_message = "\x1b[38;5;160mConfig file error: No option"\
         " 'database' in section: 'repository'\x1b[0m\n"
 
     out, err = capsys.readouterr()
@@ -56,7 +56,7 @@ def test_config_file_throws_invalid_token(
             cipher_suite, connection_config_with_invalid_token
         )
 
-    error_message = u"\x1b[38;5;160mERROR: InvalidToken\x1b[0m\n"
+    error_message = "\x1b[38;5;160mERROR: InvalidToken\x1b[0m\n"
 
     out, err = capsys.readouterr()
     assert error_message == out
@@ -71,7 +71,7 @@ def test_config_file_throws_exception(
             'empty string', test_connection_config_path
         )
 
-    error_message = u"\x1b[38;5;160mERROR: 'str' object has no attribute"\
+    error_message = "\x1b[38;5;160mERROR: 'str' object has no attribute"\
         " 'decrypt'\x1b[0m\n"
 
     out, err = capsys.readouterr()
@@ -96,7 +96,7 @@ def test_get_config_values_from_config_file_successfully(
 def test_get_config_values_from_config_file_throws_no_section_error(
     utils, connection_config_without_section
 ):
-    with pytest.raises(ConfigParser.NoSectionError) as exec_info:
+    with pytest.raises(configparser.NoSectionError) as exec_info:
         utils.get_config_values_from_config_file(
             connection_config_without_section
         )
@@ -107,7 +107,7 @@ def test_get_config_values_from_config_file_throws_no_section_error(
 def test_get_config_values_from_config_file_throws_no_option_error(
     utils, connection_config_without_option
 ):
-    with pytest.raises(ConfigParser.NoOptionError) as exec_info:
+    with pytest.raises(configparser.NoOptionError) as exec_info:
         utils.get_config_values_from_config_file(
             connection_config_without_option
         )

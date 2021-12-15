@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 import _mysql as MySQLdb
 import MySQLdb.cursors
-from utils import Utils
+from .utils import Utils
 
 
 def from_config_file(cipher=None, config_path=None):
@@ -21,8 +21,12 @@ class Connection(object):
         self.port = port
         self.database = database
         self.user = user
-        self.password = password
         self.cipher = cipher
+
+        if isinstance(password, bytes):
+            password = password.decode("utf8")
+
+        self.password = password
 
     @contextmanager
     def connect(self):

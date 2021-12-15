@@ -17,11 +17,11 @@ def fore_green(text):
 
 
 def print_warning(text):
-    print fore.LIGHT_YELLOW + text + style.RESET
+    print(fore.LIGHT_YELLOW + text + style.RESET)
 
 
 def print_error(text):
-    print fore.RED_3B + text + style.RESET
+    print(fore.RED_3B + text + style.RESET)
 
 
 """

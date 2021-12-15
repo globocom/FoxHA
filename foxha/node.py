@@ -1,7 +1,9 @@
 from datetime import datetime
 from _mysql import OperationalError
-from query import Query
-from connection import Connection
+from .query import Query
+from .connection import Connection
+from os.path import exists
+import yaml
 
 
 READ_ONLY_MYSQL_STATUS = 'ON'
@@ -59,9 +61,21 @@ class LogicalNode(object):
 
 class PhysicalNode(object):
     def __init__(self, ip, port, user, password, cipher):
+        if isinstance(password, bytes):
+            password = password.decode("utf8")
         self.node_connection = Connection(ip, port, '', user, password, cipher)
         self.mysql_user = user
         self.mysql_password = password
+
+    @property
+    def config(self):
+        conf_file = "config/node_config.yml"
+
+        if not exists(conf_file):
+            raise FileNotFoundError("Config file %s does not exists." % conf_file)
+
+        with open(conf_file) as f:
+            return yaml.safe_load(f)
 
     @property
     def mysql_status(self):
@@ -155,6 +169,21 @@ class PhysicalNode(object):
         else:
             return int(result['Master_Server_Id'])
 
+    def process_list(self, protected_users):
+        try:
+            result = self.node_connection.execute(Query.SHOW_FULL_PROCESS_LIST.format(protected_users))
+        except OperationalError:
+            return None
+        else:
+            return result
+    
+    def kill(self, conn_id):
+        try:
+            self.node_connection.execute(Query.SQL_KILL_CONNECTION.format(conn_id))
+        except OperationalError:
+            return False
+        else:
+            return True
 
 class Node(LogicalNode, PhysicalNode):
     def __init__(self, group, ip, fox_connection):
@@ -166,7 +195,7 @@ class Node(LogicalNode, PhysicalNode):
         )
         PhysicalNode.__init__(
             self, ip, result['node_port'], result['mysql_adm_user'],
-            fox_connection.cipher.decrypt(result['mysql_adm_pass']),
+            fox_connection.cipher.decrypt(result['mysql_adm_pass'].encode("utf8")).decode("utf8"),
             fox_connection.cipher
         )
 

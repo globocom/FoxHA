@@ -3,7 +3,7 @@ from foxha import inner_logic
 from foxha.query import Query
 from foxha.errors import GroupNotFoundError, GroupAlreadyAddedError, \
     NodeAlreadyAddedError, NodeNotFoundError, GroupWithNodesError
-import conftest
+from . import conftest
 
 
 def clear_database():

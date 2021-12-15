@@ -64,7 +64,7 @@ do
         exit 1
     fi
 	echo "Trying to connect to mysql: $NODE_NAME... $COUNT"
-	mysql -h $NODE_NAME -P $NODE_PORT -u $MYSQL_USER -p$MYSQL_PASS -e 'exit' 2> /dev/null
+	mysql -h $NODE_NAME -P $NODE_PORT -u $MYSQL_USER -p$MYSQL_PASS -e 'exit' 
 	CONNECT_SUCCESS=$?
 	sleep 1
 done
@@ -89,7 +89,7 @@ fi
 ##               MAIN                ##
 #######################################
 
-if [ $ACTION == "start" ]; then
+if [[ $ACTION == "start" ]]; then
     docker_start
     keyfile_symlink
     config_mysql_repl db1 3308 db2

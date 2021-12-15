@@ -1,6 +1,6 @@
 import os
 import pytest
-import ConfigParser
+import configparser
 from foxha.utils import Utils
 
 
@@ -50,7 +50,7 @@ def connection_config_with_pading_token(utils, config_files_dir_utils):
 
 @pytest.fixture(scope='module')
 def config_file_dict(test_connection_config_path):
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.read(test_connection_config_path)
 
     return {
